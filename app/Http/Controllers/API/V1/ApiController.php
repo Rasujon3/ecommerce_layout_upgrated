@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Models\PaymentInfo;
 use App\Models\WebsitePurchase;
+use App\Models\WhyChooseUs;
 use Exception;
 use Illuminate\Http\Request;
 use App\Models\Domain;
@@ -152,9 +153,9 @@ class ApiController extends Controller
 
 
 	        $domain = Domain::with('theme')->where('domain',$request->domain)->first();
-	        
+
 	        if($request->domain == 'dummy')
-	        {    
+	        {
 	            $user = User::findorfail($request->user_id);
 	            $infoData = Setting::where('user_id',$request->user_id)->first();
 	            $domain = Domain::with('theme')->where('user_id',$request->user_id)->first();
@@ -188,10 +189,10 @@ class ApiController extends Controller
 	                'data' => $validator->errors()
 	            ], 422);
 	        }
-	        
-	 
+
+
 	        $domain = domainDetails($request);
-	        
+
 	        if($request->has('user_id'))
 	        {
 	            $sliders = Slider::where('user_id',$request->user_id)->where('status','Active')->get();
@@ -199,7 +200,7 @@ class ApiController extends Controller
 	            $sliders = Slider::where('domain_id',$domain->id)->where('status','Active')->get();
 	        }
 
-	        
+
 
 	        return response()->json(['status'=>count($sliders)>0, 'total'=>count($sliders), 'data'=>$sliders]);
 
@@ -261,15 +262,15 @@ class ApiController extends Controller
 	        }
 
 	        $domain = domainDetails($request);
-	        
+
 	        if($request->has('user_id'))
 	        {
 	            $reviews = Review::where('user_id',$request->user_id)->where('status','Active')->latest()->get();
 	        }else{
-	           $reviews = Review::where('domain_id',$domain->id)->where('status','Active')->latest()->get(); 
+	           $reviews = Review::where('domain_id',$domain->id)->where('status','Active')->latest()->get();
 	        }
 
-	        
+
 
 	        return response()->json(['status'=>count($reviews)>0, 'total'=>count($reviews), 'data'=>$reviews]);
 
@@ -296,7 +297,7 @@ class ApiController extends Controller
 	        }
 
 	        $domain = domainDetails($request);
-	        
+
 	        if($request->has('user_id'))
 	        {
 	            $video = Video::where('user_id',$request->user_id)->first();
@@ -304,7 +305,7 @@ class ApiController extends Controller
 	            $video = Video::where('domain_id',$domain->id)->first();
 	        }
 
-	        
+
 
 	       // return $video;
 
@@ -910,7 +911,7 @@ class ApiController extends Controller
             return $this->sendResponse(false, 'Something went wrong!!!', [], 500);
         }
     }
-    
+
     public function getToken()
     {
         $credentials = [
@@ -968,6 +969,33 @@ class ApiController extends Controller
                 'statusCode' => 500,
                 'message' => 'Something went wrong while requesting token.',
                 'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function whyChooseUs()
+    {
+
+        try {
+            $whyChooseUs = WhyChooseUs::latest()->get();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Why choose us retrieved successfully.',
+                'data'    => $whyChooseUs
+            ], 200);
+        } catch(Exception $e) {
+            // Log the error
+            Log::error('Error in creating WhyChooseUs: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'status' => false,
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
             ], 500);
         }
     }

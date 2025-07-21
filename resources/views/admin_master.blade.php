@@ -656,6 +656,15 @@
           </li>
 
           <li class="nav-item">
+            <a href="{{ route('why_choose_us.index') }}" class="nav-link">
+              <i class="nav-icon fas fa-cog"></i>
+              <p>
+                Why Choose Us
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
             <a href="{{url('/password-change')}}" class="nav-link">
               <i class="nav-icon fas fa-cog"></i>
               <p>

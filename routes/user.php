@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WhyChooseUsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\ExpenseController;
@@ -100,4 +101,12 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
     Route::get('/purchase-history', [SettingController::class, 'purchaseHistory'])->name('purchase-history');
     Route::post('/purchase-status-update', [SettingController::class, 'userStatusUpdate']);
     Route::get('/view-purchase-history/{id}', [SettingController::class, 'viewPurchaseHistory'])->name('view-purchase-history');
+
+    // Why Choose Us
+    Route::get('/why-choose-us', [WhyChooseUsController::class, 'index'])->name('why_choose_us.index');
+    Route::get('/why-choose-us/create', [WhyChooseUsController::class, 'create'])->name('why_choose_us.create');
+    Route::post('/why-choose-us', [WhyChooseUsController::class, 'store'])->name('why_choose_us.store');
+    Route::get('/why-choose-us/{id}/edit', [WhyChooseUsController::class, 'edit'])->name('why_choose_us.edit');
+    Route::post('/why-choose-us/{whyChooseUs}', [WhyChooseUsController::class, 'update'])->name('why_choose_us.update');
+    Route::post('/delete/why-choose-us/{whyChooseUs}', [WhyChooseUsController::class, 'destroy'])->name('why_choose_us.destroy');
 });

@@ -50,8 +50,10 @@ Route::middleware(['custom.cors', 'throttle:60,1'])->group(function () {
     Route::post('/payment-info', [ApiController::class, 'paymentInfo']);
 
     Route::get('/get-image/{fileName}', [ApiController::class, 'getMusic'])->name('payment-info.getImage');
-    
+
     Route::get('/get-token', [ApiController::class, 'getToken'])->name('get-token');
-    
+
     Route::post('payment-request', [ApiController::class, 'paymentRequest']);
+
+    Route::get('/why-choose-us', [ApiController::class, 'whyChooseUs'])->name('why-choose-us');
 });
