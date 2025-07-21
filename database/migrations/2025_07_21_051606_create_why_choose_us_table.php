@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('why_choose_us', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('description');
             $table->timestamps();
         });

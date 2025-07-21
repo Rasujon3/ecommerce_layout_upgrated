@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banner;
 use App\Models\PaymentInfo;
 use App\Models\WebsitePurchase;
 use App\Models\WhyChooseUs;
@@ -973,11 +974,21 @@ class ApiController extends Controller
         }
     }
 
-    public function whyChooseUs()
+    public function whyChooseUs(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'user_id'  => 'required|exists:users,id',
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Validation error',
+                'errors'  => $validator->errors()
+            ], 422);
+        }
         try {
-            $whyChooseUs = WhyChooseUs::latest()->get();
+            $whyChooseUs = WhyChooseUs::where('user_id',$request->user_id)->latest()->get();
 
             return response()->json([
                 'status'  => true,
@@ -997,6 +1008,56 @@ class ApiController extends Controller
                 'code' => $e->getCode(),
                 'message' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function banner()
+    {
+        try {
+            $banner = Banner::latest()->get();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Banner retrieved successfully.',
+                'data'    => $banner
+            ], 200);
+        } catch(Exception $e) {
+            // Log the error
+            Log::error('Error in creating WhyChooseUs: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'status' => false,
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getBannerImg($filename)
+    {
+        try {
+            $path = public_path('files/music/mp3/' . $filename);
+
+            if (!file_exists($path)) {
+                return $this->sendResponse(false, '404, File not found.', []);
+            }
+
+            return response()->file($path);
+        } catch (Exception $e) {
+
+            // Log the error
+            Log::error('Error in get File: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return $this->sendResponse(false, 'Something went wrong!!!', [], 500);
         }
     }
 }

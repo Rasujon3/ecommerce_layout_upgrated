@@ -12,6 +12,7 @@ class WhyChooseUs extends Model
     protected $table = 'why_choose_us';
 
     protected $fillable = [
+        'user_id',
         'description',
     ];
 }

@@ -7,6 +7,8 @@ use App\Models\WhyChooseUs;
 use Exception;
 use Illuminate\Http\Request;
 use DataTables;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class WhyChooseUsController extends Controller
 {
@@ -16,7 +18,7 @@ class WhyChooseUsController extends Controller
         {
             if($request->ajax()){
 
-                $whyChooseUs = WhyChooseUs::select('*')->latest();
+                $whyChooseUs = WhyChooseUs::where('user_id', Auth::user()->id,)->select('*')->latest();
 
                 return Datatables::of($whyChooseUs)
                     ->addIndexColumn()
@@ -57,6 +59,7 @@ class WhyChooseUsController extends Controller
         try
         {
             WhyChooseUs::create([
+                'user_id' => Auth::user()->id,
                 'description' => $request->description,
             ]);
             $notification = array(
@@ -66,11 +69,19 @@ class WhyChooseUsController extends Controller
 
             return redirect()->route('why_choose_us.index')->with($notification);
         } catch(Exception $e) {
-            return response()->json([
-                'status'=>false,
-                'code'=>$e->getCode(),
-                'message'=>$e->getMessage()
-            ],500);
+            // Log the error
+            Log::error('Error in storing Why Choose Us: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $notification = [
+                'messege' => 'Something went wrong!!!',
+                'alert-type' => 'error'
+            ];
+            return redirect()->route('why_choose_us.index')->with($notification);
         }
     }
 
