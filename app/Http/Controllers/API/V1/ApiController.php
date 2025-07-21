@@ -805,11 +805,21 @@ class ApiController extends Controller
         }
     }
 
-    public function getPaymentInfo()
+    public function getPaymentInfo(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'user_id'  => 'required|exists:users,id',
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Validation error',
+                'errors'  => $validator->errors()
+            ], 422);
+        }
         try {
-            $paymentInfo = PaymentInfo::latest()->get();
+            $paymentInfo = PaymentInfo::where('user_id', $request->user_id)->latest()->get();
 
             return response()->json([
                 'status'  => true,

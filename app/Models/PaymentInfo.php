@@ -12,6 +12,7 @@ class PaymentInfo extends Model
     protected $table = 'payment_infos';
 
     protected $fillable = [
+        'user_id',
         'logo',
         'payment_method',
         'account_number',
