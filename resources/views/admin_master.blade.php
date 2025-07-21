@@ -665,6 +665,15 @@
           </li>
 
           <li class="nav-item">
+            <a href="{{ route('banner.index') }}" class="nav-link">
+              <i class="nav-icon fas fa-cog"></i>
+              <p>
+                Banner
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
             <a href="{{url('/password-change')}}" class="nav-link">
               <i class="nav-icon fas fa-cog"></i>
               <p>

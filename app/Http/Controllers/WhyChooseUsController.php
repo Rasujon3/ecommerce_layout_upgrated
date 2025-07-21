@@ -12,9 +12,6 @@ class WhyChooseUsController extends Controller
 {
     public function index(Request $request)
     {
-//        $items = WhyChooseUs::latest()->get();
-//        return view('admin.why_choose_us.index', compact('items'));
-
         try
         {
             if($request->ajax()){

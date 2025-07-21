@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\WhyChooseUsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SliderController;
@@ -109,4 +110,12 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
     Route::get('/why-choose-us/{id}/edit', [WhyChooseUsController::class, 'edit'])->name('why_choose_us.edit');
     Route::post('/why-choose-us/{whyChooseUs}', [WhyChooseUsController::class, 'update'])->name('why_choose_us.update');
     Route::post('/delete/why-choose-us/{whyChooseUs}', [WhyChooseUsController::class, 'destroy'])->name('why_choose_us.destroy');
+
+    // Banner
+    Route::get('/banner', [BannerController::class, 'index'])->name('banner.index');
+    Route::get('/banner/create', [BannerController::class, 'create'])->name('banner.create');
+    Route::post('/banner', [BannerController::class, 'store'])->name('banner.store');
+    Route::get('/banner/{id}/edit', [BannerController::class, 'edit'])->name('banner.edit');
+    Route::post('/banner/{banner}', [BannerController::class, 'update'])->name('banner.update');
+    Route::post('/delete/banner/{banner}', [BannerController::class, 'destroy'])->name('banner.destroy');
 });
