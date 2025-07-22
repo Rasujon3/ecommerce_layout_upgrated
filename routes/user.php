@@ -52,7 +52,10 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
 
     Route::resource('ariadhakas', AriadhakaController::class);
 
-  //video
+    Route::get('/get-districts/{division_id}', [AriadhakaController::class, 'getDistricts']);
+
+
+    //video
 
     Route::get('/add-video', [VideoController::class, 'addVideo']);
 

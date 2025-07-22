@@ -60,4 +60,6 @@ Route::middleware(['custom.cors', 'throttle:60,1'])->group(function () {
     Route::get('/banner', [ApiController::class, 'banner'])->name('banner');
 
     Route::get('/get-banner-image/{fileName}', [ApiController::class, 'getBannerImg'])->name('banner.getImage');
+
+    Route::post('/get-delivery-charges', [ApiController::class, 'getDeliveryCharges']);
 });

@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ariadhaka;
+use Exception;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreAreaRequest;
-use App\Http\Requests\UpdateAreaRequest; 
+use App\Http\Requests\UpdateAreaRequest;
 use DataTables;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class AriadhakaController extends Controller
 {
@@ -36,9 +39,9 @@ class AriadhakaController extends Controller
                         ->addColumn('status', function($row){
                             return '<label class="switch"><input class="' . ($row->status == 'Active' ? 'active-aria' : 'decline-aria') . '" id="status-aria-update"  type="checkbox" ' . ($row->status == 'Active' ? 'checked' : '') . ' data-id="'.$row->id.'"><span class="slider round"></span></label>';
                         })
-                       
+
                         ->addColumn('action', function($row){
-                                                        
+
                            $btn = "";
                            $btn .= '&nbsp;';
                            $btn .= ' <a href="'.route('ariadhakas.show',$row->id).'" class="btn btn-primary btn-sm action-button edit-aria" data-id="'.$row->id.'"><i class="fa fa-edit"></i></a>';
@@ -46,10 +49,10 @@ class AriadhakaController extends Controller
                             $btn .= '&nbsp;';
 
 
-                            $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-aria action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>'; 
-        
-                          
-        
+                            $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-aria action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>';
+
+
+
                             return $btn;
                         })
                         ->rawColumns(['action','status'])
@@ -64,18 +67,19 @@ class AriadhakaController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function create()
     {
-        return view('areas.create');
+        $divisions = $this->getDivision();
+        return view('areas.create', compact('divisions'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreAreaRequest $request)
     {
@@ -83,18 +87,32 @@ class AriadhakaController extends Controller
         {
             $area = new Ariadhaka();
             $area->user_id = user()->id;
+            $area->division = $request->division ?? '';
             $area->area_name = $request->area_name;
             $area->area_type = $request->area_type;
             $area->status = $request->status;
+            $area->delivery_charges = $request->delivery_charges ?? '';
             $area->save();
             $notification=array(
                 'messege'=>'Successfully an area has been added',
                 'alert-type'=>'success',
             );
 
-            return redirect()->back()->with($notification);
+            return redirect()->route('ariadhakas.index')->with($notification);
         }catch(Exception $e){
-            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+            // Log the error
+            Log::error('Error in storing area: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $notification=array(
+                'messege'=>'Something went wrong!!!',
+                'alert-type'=>'error'
+            );
+            return redirect()->route('ariadhakas.index')->with($notification);
         }
     }
 
@@ -160,6 +178,42 @@ class AriadhakaController extends Controller
             return response()->json(['status'=>true, 'message'=>'Successfully the aria has been deleted']);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    private function getDivision()
+    {
+        // API call
+        $response = Http::get('https://bdapi.vercel.app/api/v.1/division');
+
+        $divisions = [];
+        if ($response->successful()) {
+            $divisions = $response['data'];
+        }
+        return $divisions;
+    }
+
+    public function getDistricts($division_id)
+    {
+        if (!is_numeric($division_id)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid division ID'
+            ], 422);
+        }
+
+        $response = Http::get("https://bdapi.vercel.app/api/v.1/district/{$division_id}");
+
+        if ($response->successful()) {
+            return response()->json([
+                'status' => true,
+                'districts' => $response['data']
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'API error'
+            ], 500);
         }
     }
 }

@@ -1070,4 +1070,48 @@ class ApiController extends Controller
             return $this->sendResponse(false, 'Something went wrong!!!', [], 500);
         }
     }
+
+    public function getDeliveryCharges(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'domain'  => 'required|exists:domains,domain',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Validation error',
+                'errors'  => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $domain = Domain::where('domain', $request->domain)->first('user_id');
+            $data = Ariadhaka::where('user_id',$domain->user_id)->latest()->get();
+            // Map and set delivery_charges to 0 if null
+            $data = $data->map(function ($item) {
+                $item->delivery_charges = $item->delivery_charges ?? '0';
+                return $item;
+            });
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Delivery Charges data fetched successfully.',
+                'data'    => $data
+            ], 200);
+        } catch(Exception $e) {
+            // Log the error
+            Log::error('Error in creating getDeliveryCharges: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'status' => false,
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

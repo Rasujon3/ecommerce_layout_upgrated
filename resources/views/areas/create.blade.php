@@ -32,7 +32,7 @@
                 @csrf
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        {{--<div class="col-md-12">
                             <div class="form-group">
                                 <label for="area_name">Area Name <span class="required">*</span></label>
                                 <input type="text" name="area_name" class="form-control" id="area_name"
@@ -41,22 +41,52 @@
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-                        </div> 
-
+                        </div>--}}
 
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="area_type">Select Area Type <span class="required">*</span></label>
-                                <select class="form-control select2bs4" name="area_type" id="area_type" required="">
-                                    <option value="Inside Dhaka" selected="">Inside Dhaka</option>
+                                <label for="division">Select Division <span class="required">*</span></label>
+                                <select class="form-control select2bs4" name="division" id="division" required="">
+                                    <option value="" selected="" disabled="">Select Division</option>
+                                    @if(count($divisions) > 0)
+                                        @foreach ($divisions as $division)
+                                            <option value="{{ $division['name'] }}" data-id="{{$division['id']}}">{{ $division['bn_name'] }}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
-                                @error('area_type')
+                                @error('division')
+                                <span class="alert alert-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="district">Select District <span class="required">*</span></label>
+                                <select class="form-control select2bs4" name="area_name" id="district" required="">
+                                    <option value="" selected="" disabled="">Select District</option>
+
+                                </select>
+                                @error('area_name')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
 
 
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="area_type">Select Area Type <span class="required">*</span></label>
+                                <select class="form-control select2bs4" name="area_type" id="area_type" required="">
+                                    <option value="" selected="" disabled="">Select Area Type</option>
+                                    <option value="Inside">Inside</option>
+                                    <option value="Outside">Outside</option>
+                                </select>
+                                @error('area_type')
+                                <span class="alert alert-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
 
                         <div class="col-md-12">
                             <div class="form-group">
@@ -72,7 +102,18 @@
                             </div>
                         </div>
 
-                        
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="delivery_charges">Delivery Charges <span class="required">*</span></label>
+                                <input type="text" name="delivery_charges" class="form-control" id="delivery_charges"
+                                    placeholder="Delivery Charges" required="" value="{{ old('delivery_charges') }}">
+                                @error('delivery_charges')
+                                <span class="alert alert-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+
                         <div class="form-group w-100 px-2">
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
@@ -84,3 +125,34 @@
     </section>
 </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+            $('#division').on('change', function () {
+                let divisionId = $(this).find(':selected').data('id');
+
+                if (divisionId) {
+                    $.ajax({
+                        url: '/get-districts/' + divisionId,
+                        type: 'GET',
+                        success: function (res) {
+                            $('#district').empty().append('<option value="" disabled selected>Select District</option>');
+
+                            if (res.status && res.districts.length > 0) {
+                                $.each(res.districts, function (key, district) {
+                                    $('#district').append('<option value="' + district.name + '">' + district.bn_name + '</option>');
+                                });
+                            } else {
+                                $('#district').append('<option value="" disabled>No District Found</option>');
+                            }
+                        },
+                        error: function () {
+                            alert('Failed to fetch district data.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+@endpush

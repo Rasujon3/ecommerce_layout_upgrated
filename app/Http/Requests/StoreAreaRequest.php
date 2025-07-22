@@ -24,9 +24,11 @@ class StoreAreaRequest extends FormRequest
     public function rules()
     {
         return [
-            'area_name' => 'required|string|max:50|unique:ariadhakas',
-            'area_type' => 'required|in:Inside Dhaka,Outside Dhaka',
+            'division' => 'nullable|string|max:191',
+            'area_name' => 'required|string|max:50',
+            'area_type' => 'required|in:Inside,Outside',
             'status' => 'required|in:Active,Inactive',
+            'delivery_charges' => 'nullable|string|max:191',
         ];
     }
 }
