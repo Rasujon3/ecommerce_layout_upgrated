@@ -429,7 +429,7 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-map"></i>
               <p>
-                Area
+                Delivery Charge Area
                 <i class="fas fa-angle-left right"></i>
               </p>
             </a>

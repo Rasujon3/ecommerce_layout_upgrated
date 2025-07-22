@@ -98,7 +98,7 @@ class AriadhakaController extends Controller
                 'alert-type'=>'success',
             );
 
-            return redirect()->route('ariadhakas.index')->with($notification);
+            return redirect()->back()->with($notification);
         }catch(Exception $e){
             // Log the error
             Log::error('Error in storing area: ', [
@@ -112,7 +112,7 @@ class AriadhakaController extends Controller
                 'messege'=>'Something went wrong!!!',
                 'alert-type'=>'error'
             );
-            return redirect()->route('ariadhakas.index')->with($notification);
+            return redirect()->back()->with($notification);
         }
     }
 
@@ -124,7 +124,8 @@ class AriadhakaController extends Controller
      */
     public function show(Ariadhaka $ariadhaka)
     {
-        return view('areas.edit', compact('ariadhaka'));
+        $divisions = $this->getDivision();
+        return view('areas.edit', compact('ariadhaka', 'divisions'));
     }
 
     /**
@@ -149,9 +150,11 @@ class AriadhakaController extends Controller
     {
         try
         {
+            $ariadhaka->division = $request->division ?? '';
             $ariadhaka->area_name = $request->area_name;
             $ariadhaka->area_type = $request->area_type;
             $ariadhaka->status = $request->status;
+            $ariadhaka->delivery_charges = $request->delivery_charges ?? null;
             $ariadhaka->update();
             $notification=array(
                 'messege'=>'Successfully the area has been updated',
@@ -160,7 +163,19 @@ class AriadhakaController extends Controller
 
             return redirect()->route('ariadhakas.index')->with($notification);
         }catch(Exception $e){
-            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+            // Log the error
+            Log::error('Error in storing area: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $notification=array(
+                'messege'=>'Something went wrong!!!',
+                'alert-type'=>'error'
+            );
+            return redirect()->route('ariadhakas.index')->with($notification);
         }
     }
 
