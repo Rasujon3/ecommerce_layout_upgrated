@@ -583,7 +583,7 @@
 
 
           @if(user()->role_id == 2)
-          <li class="nav-item">
+          <li class="nav-item d-none">
             <a href="{{url('/set-delivery-charge')}}" class="nav-link">
               <i class="nav-icon fas fa-cog"></i>
               <p>

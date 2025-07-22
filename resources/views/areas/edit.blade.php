@@ -118,7 +118,7 @@
 
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="delivery_charges">Delivery Charges <span class="required">*</span></label>
+                                <label for="delivery_charges">Delivery Charges (%)<span class="required">*</span></label>
                                 <input type="text" name="delivery_charges" class="form-control" id="delivery_charges"
                                        placeholder="Delivery Charges" required="" value="{{ old('delivery_charges', $ariadhaka->delivery_charges) }}">
                                 @error('delivery_charges')

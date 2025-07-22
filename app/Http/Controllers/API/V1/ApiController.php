@@ -1087,7 +1087,7 @@ class ApiController extends Controller
 
         try {
             $domain = Domain::where('domain', $request->domain)->first('user_id');
-            $data = Ariadhaka::where('user_id',$domain->user_id)->latest()->get();
+            $data = Ariadhaka::where('user_id',$domain->user_id)->where('status', 'Active')->latest()->get();
             // Map and set delivery_charges to 0 if null
             $data = $data->map(function ($item) {
                 $item->delivery_charges = $item->delivery_charges ?? '0';
