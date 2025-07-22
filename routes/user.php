@@ -78,6 +78,8 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
 
     Route::get('/search-courier-order', [OrderController::class, 'searchCourierOrder']);
 
+    Route::get('/order-print/{id}', [OrderController::class, 'orderPrint']);
+
 
 
   //settings

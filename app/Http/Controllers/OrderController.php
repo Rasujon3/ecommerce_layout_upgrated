@@ -9,14 +9,14 @@ use App\Models\Courier;
 use DataTables;
 
 class OrderController extends Controller
-{   
+{
 
 	public function __construct()
     {
         $this->middleware('auth_check');
     }
 
-    public function orders(Request $request) 
+    public function orders(Request $request)
     {
     	try
         {
@@ -58,7 +58,7 @@ class OrderController extends Controller
                             $html .= "</select>";
 
                             return $html;
-                        }) 
+                        })
 
 
                        ->addColumn('courier_status', function($row) {
@@ -92,29 +92,34 @@ class OrderController extends Controller
                             }else{
                                 return "-";
                             }
-                            
+
 
                         })
-                       
+
                         ->addColumn('action', function($row){
-                                                        
+
                            $btn = "";
                            $btn .= '&nbsp;';
                            $btn .= ' <button type="button" class="btn btn-success btn-sm action-button edit-order customer-discount" data-id="'.$row->id.'"><i class="fa fa-percent"></i></button>';
 
                            $btn .= '&nbsp;';
-        
-                            
+
+
 
                             $btn .= ' <a href="'.url('/show-invoice/'.$row->id).'" class="btn btn-primary btn-sm action-button edit-order" data-id="'.$row->id.'"><i class="fa fa-eye"></i></a>';
 
                             $btn .= '&nbsp;';
 
 
-                            $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-order action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>'; 
+                            $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-order action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>';
 
-                             
-        
+                            $btn .= '&nbsp;';
+
+
+                            $btn .= ' <a href="'.url('/order-print/'.$row->id).'" target="_blank" class="btn btn-info btn-sm action-button" data-id="'.$row->id.'"><i class="fa fa-print"></i></a>';
+
+
+
                             return $btn;
                         })->filter(function ($instance) use ($request) {
 
@@ -123,13 +128,13 @@ class OrderController extends Controller
                                     $search = $request->get('search');
                                     $w->orWhere('orderdetails.customer_name', 'LIKE', "%$search%")->orWhere('orderdetails.customer_phone', 'LIKE', "%$search%")->orWhere('couriers.consignment_id','LIKE',"%$search%");
                                 });
-                            } 
+                            }
 
                             if ($request->get('from_date') != "") {
                                  $instance->where(function($w) use($request){
                                     $w->orWhereDate('orderdetails.created_at', '>=', $request->from_date);
                                 });
-                            } 
+                            }
 
                             if ($request->get('to_date') != "") {
                                  $instance->where(function($w) use($request){
@@ -144,7 +149,7 @@ class OrderController extends Controller
                                 });
                             }
 
-                                
+
                         })->setRowID('id')
                         ->rawColumns(['action','status','order_id','order_date','courier_status'])
                         ->make(true);
@@ -187,7 +192,7 @@ class OrderController extends Controller
     public function printInvoice($id)
     {
         try
-        {   
+        {
             $order = Orderdetail::with('orders.variant')->findorfail($id);
             return view('orders.print_invoice',compact('order'));
         }catch(Exception $e){
@@ -198,5 +203,16 @@ class OrderController extends Controller
     public function searchCourierOrder()
     {
         return view('orders.search');
+    }
+
+    public function orderPrint($id)
+    {
+        try
+        {
+            $order = Orderdetail::with('orders')->findorfail($id);
+            return view('orders.print_order',compact('order'));
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
     }
 }

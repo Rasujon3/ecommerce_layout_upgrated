@@ -22,4 +22,8 @@ class Domain extends Model
     {
         return $this->hasMany(WebsitePurchase::class);
     }
+    public function orderdetails()
+    {
+        return $this->hasMany(Orderdetail::class);
+    }
 }
