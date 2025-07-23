@@ -28,8 +28,8 @@ class StoreAreaRequest extends FormRequest
             'area_name' => 'required|string|max:50',
             'area_type' => 'nullable|in:Inside,Outside',
             'status' => 'required|in:Active,Inactive',
-            'inside_delivery_charges' => 'nullable|string|max:191',
-            'outside_delivery_charges' => 'nullable|string|max:191',
+            'inside_delivery_charges' => 'required|string|max:191',
+            'outside_delivery_charges' => 'required|string|max:191',
         ];
     }
 }
