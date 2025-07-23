@@ -74,7 +74,7 @@
                         </div>
 
 
-                        <div class="col-md-12">
+                        {{--<div class="col-md-12">
                             <div class="form-group">
                                 <label for="area_type">Select Area Type <span class="required">*</span></label>
                                 <select class="form-control select2bs4" name="area_type" id="area_type" required="">
@@ -86,7 +86,7 @@
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-                        </div>
+                        </div>--}}
 
                         <div class="col-md-12">
                             <div class="form-group">
@@ -104,10 +104,21 @@
 
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="delivery_charges">Delivery Charges (%)<span class="required">*</span></label>
-                                <input type="text" name="delivery_charges" class="form-control" id="delivery_charges"
-                                    placeholder="Delivery Charges" required="" value="{{ old('delivery_charges') }}">
-                                @error('delivery_charges')
+                                <label for="inside_delivery_charges">Inside Delivery Charges <span class="required">*</span></label>
+                                <input type="text" name="inside_delivery_charges" class="form-control" id="inside_delivery_charges"
+                                    placeholder="inside_delivery_charges" required="" value="{{ old('inside_delivery_charges') }}">
+                                @error('inside_delivery_charges')
+                                <span class="alert alert-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="outside_delivery_charges">Outside Delivery Charges <span class="required">*</span></label>
+                                <input type="text" name="outside_delivery_charges" class="form-control" id="outside_delivery_charges"
+                                    placeholder="Delivery Charges" required="" value="{{ old('outside_delivery_charges') }}">
+                                @error('outside_delivery_charges')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
                             </div>

@@ -17,6 +17,13 @@ class Ariadhaka extends Model
         'area_name',
         'area_type',
         'status',
-        'delivery_charges',
+        'inside_delivery_charges',
+        'outside_delivery_charges',
     ];
+
+    // Hide the area_type column
+    protected $hidden = [
+        'area_type',
+    ];
+
 }

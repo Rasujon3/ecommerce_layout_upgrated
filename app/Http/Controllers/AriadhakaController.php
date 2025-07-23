@@ -26,6 +26,7 @@ class AriadhakaController extends Controller
 
     public function index(Request $request)
     {
+        $count = Ariadhaka::where('user_id',user()->id)->count();
         try
         {
             if($request->ajax()){
@@ -58,7 +59,7 @@ class AriadhakaController extends Controller
                         ->rawColumns(['action','status'])
                         ->make(true);
             }
-            return view('areas.index');
+            return view('areas.index', compact('count'));
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
@@ -83,16 +84,26 @@ class AriadhakaController extends Controller
      */
     public function store(StoreAreaRequest $request)
     {
+        $count = Ariadhaka::where('user_id',user()->id)->count();
+        if ($count > 0) {
+            $notification=array(
+                'messege'=>'You can not add more than one area',
+                'alert-type'=>'error'
+            );
+            return redirect()->route('ariadhakas.index')->with($notification);
+        }
         try
         {
             $area = new Ariadhaka();
             $area->user_id = user()->id;
             $area->division = $request->division ?? '';
             $area->area_name = $request->area_name;
-            $area->area_type = $request->area_type;
+            # $area->area_type = $request->area_type;
             $area->status = $request->status;
-            $area->delivery_charges = $request->delivery_charges ?? '';
+            $area->inside_delivery_charges = $request->inside_delivery_charges ?? null;
+            $area->outside_delivery_charges = $request->outside_delivery_charges ?? null;
             $area->save();
+
             $notification=array(
                 'messege'=>'Successfully an area has been added',
                 'alert-type'=>'success',
@@ -152,9 +163,10 @@ class AriadhakaController extends Controller
         {
             $ariadhaka->division = $request->division ?? '';
             $ariadhaka->area_name = $request->area_name;
-            $ariadhaka->area_type = $request->area_type;
+            # $ariadhaka->area_type = $request->area_type;
             $ariadhaka->status = $request->status;
-            $ariadhaka->delivery_charges = $request->delivery_charges ?? null;
+            $ariadhaka->inside_delivery_charges = $request->inside_delivery_charges ?? null;
+            $ariadhaka->outside_delivery_charges = $request->outside_delivery_charges ?? null;
             $ariadhaka->update();
             $notification=array(
                 'messege'=>'Successfully the area has been updated',

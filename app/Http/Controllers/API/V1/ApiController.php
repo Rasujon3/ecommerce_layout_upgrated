@@ -1090,7 +1090,8 @@ class ApiController extends Controller
             $data = Ariadhaka::where('user_id',$domain->user_id)->where('status', 'Active')->latest()->get();
             // Map and set delivery_charges to 0 if null
             $data = $data->map(function ($item) {
-                $item->delivery_charges = $item->delivery_charges ?? '0';
+                $item->inside_delivery_charges = $item->inside_delivery_charges ?? '0';
+                $item->outside_delivery_charges = $item->outside_delivery_charges ?? '0';
                 return $item;
             });
 

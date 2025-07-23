@@ -26,7 +26,9 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                <a href="{{route('ariadhakas.create')}}" class="btn btn-primary add-new mb-2">Add New Area</a>
+                @if($count === 0)
+                    <a href="{{route('ariadhakas.create')}}" class="btn btn-primary add-new mb-2">Add New Area</a>
+                @endif
                 <div class="fetch-data table-responsive">
                     <table id="area-table" class="table table-bordered table-striped data-table">
                         <thead>
@@ -36,9 +38,9 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody class="conts"> 
+                        <tbody class="conts">
                         </tbody>
-                    </table> 
+                    </table>
                 </div>
             </div>
         </div>
@@ -47,7 +49,7 @@
 @endsection
 
 @push('scripts')
-  
+
   <script>
   	$(document).ready(function(){
   		let area_id;
@@ -75,10 +77,10 @@
 
 	         area_id = $(this).data('id');
 	         var isAreachecked = $(this).prop('checked');
-	         var status_val = isAreachecked ? 'Active' : 'Inactive'; 
+	         var status_val = isAreachecked ? 'Active' : 'Inactive';
 	         $.ajax({
 
-                url: "{{url('/ariadhaka-status-update')}}", 
+                url: "{{url('/ariadhaka-status-update')}}",
 
                      type:"POST",
                      data:{'area_id':area_id, 'status':status_val},
@@ -90,9 +92,9 @@
                         $('.data-table').DataTable().ajax.reload(null, false);
 
                 },
-	                            
+
 	        });
-       }); 
+       });
 
 
        $(document).on('click', '.delete-aria', function(e){
@@ -116,7 +118,7 @@
                             $('.data-table').DataTable().ajax.reload(null, false);
 
                     },
-                                
+
               });
            }
 

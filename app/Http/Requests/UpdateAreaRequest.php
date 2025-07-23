@@ -26,9 +26,10 @@ class UpdateAreaRequest extends FormRequest
         return [
             'division' => 'nullable|string|max:191',
             'area_name' => 'required|string|max:50',
-            'area_type' => 'required|in:Inside,Outside',
+            'area_type' => 'nullable|in:Inside,Outside',
             'status' => 'required|in:Active,Inactive',
-            'delivery_charges' => 'nullable|string|max:191',
+            'inside_delivery_charges' => 'nullable|string|max:191',
+            'outside_delivery_charges' => 'nullable|string|max:191',
         ];
     }
 }
