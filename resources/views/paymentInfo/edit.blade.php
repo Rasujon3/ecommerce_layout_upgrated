@@ -38,9 +38,9 @@
                                     <label for="payment_method">Select Payment Method <span class="required">*</span></label>
                                     <select class="form-control select2bs4" name="payment_method" id="payment_method" required="">
                                         <option value="" selected="" disabled="">Select Payment Method</option>
-                                        <option value="bKash" selected="{{ $paymentInfo->payment_method === 'bKash' ? 'selected' : '' }} ">BKash</option>
-                                        <option value="rocket" selected="{{ $paymentInfo->payment_method === 'rocket' ? 'selected' : '' }} ">Rocket</option>
-                                        <option value="nogod" selected="{{ $paymentInfo->payment_method === 'nogod' ? 'selected' : '' }} ">Nogod</option>
+                                        <option value="bKash" @if($paymentInfo->payment_method === 'bKash') selected @endif>BKash</option>
+                                        <option value="rocket" @if($paymentInfo->payment_method === 'rocket') selected @endif>Rocket</option>
+                                        <option value="nogod" @if($paymentInfo->payment_method === 'nogod') selected @endif>Nogod</option>
                                     </select>
                                     @error('payment_method')
                                     <span class="alert alert-danger">{{ $message }}</span>
@@ -64,8 +64,8 @@
                                     <label for="payment_type">Select Payment Type <span class="required">*</span></label>
                                     <select class="form-control select2bs4" name="payment_type" id="payment_type" required="">
                                         <option value="" selected="" disabled="">Select Payment Type</option>
-                                        <option value="Personal" selected="{{ $paymentInfo->payment_type === 'Personal' ? 'selected' : '' }} ">Personal</option>
-                                        <option value="Agent" selected="{{ $paymentInfo->payment_type === 'Agent' ? 'selected' : '' }} ">Agent</option>
+                                        <option value="Personal" @if($paymentInfo->payment_type === 'Personal') selected @endif>Personal</option>
+                                        <option value="Agent" @if($paymentInfo->payment_type === 'Agent') selected @endif>Agent</option>
                                     </select>
                                     @error('payment_type')
                                     <span class="alert alert-danger">{{ $message }}</span>
