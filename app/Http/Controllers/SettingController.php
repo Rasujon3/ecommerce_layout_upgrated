@@ -225,6 +225,20 @@ class SettingController extends Controller
             return redirect()->back()->with($notification);
         }
 
+        $bkashLogoUrl = "payment_icon/bikash.jpg";
+        $rocketLogoUrl = "payment_icon/rocket.png";
+        $nogodLogoUrl = "payment_icon/nagad.png";
+
+        // Set payment icon based on payment method
+        $logoUrl = null;
+        if ($request->payment_method === 'bKash') {
+            $logoUrl = $bkashLogoUrl;
+        } elseif ($request->payment_method === 'rocket') {
+            $logoUrl = $rocketLogoUrl;
+        } else {
+            $logoUrl = $nogodLogoUrl;
+        }
+
         try
         {
             $paymentInfo = new PaymentInfo();
@@ -233,6 +247,7 @@ class SettingController extends Controller
             $paymentInfo->account_number = $request->account_number;
             $paymentInfo->payment_type = $request->payment_type;
             $paymentInfo->instructions = $request->instructions;
+            $paymentInfo->logo = $logoUrl;
             $paymentInfo->save();
             $notification=array(
                 'messege' => 'Successfully a payment info has been added',
@@ -241,7 +256,19 @@ class SettingController extends Controller
 
             return redirect()->route('payment-info.index')->with($notification);
         }catch(Exception $e){
-            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+            // Log the error
+            Log::error('Error in storing payment info: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $notification=array(
+                'messege'=>'Something went wrong!!!',
+                'alert-type'=>'error'
+            );
+            return redirect()->back()->with($notification);
         }
     }
     public function EditPaymentInfo($id)
