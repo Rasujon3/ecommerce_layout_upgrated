@@ -93,13 +93,14 @@
 <body>
 
 <div id="invoice-POS">
-{{--{{ dd('$order', $order) }}--}}
-{{--{{ dd('$order->domain', $order->domain->shop_name) }}--}}
-{{--{{ dd('$order->orders', $order->orders) }}--}}
     <center id="top">
         <div class="logo"></div>
         <div class="info">
             <h2>{{ $order->domain->shop_name ?? "" }}</h2>
+            <h5>
+                Order ID : {{ $OrderID ?? '' }}</br>
+                Merchant ID : {{ $settings->merchant_id ?? '' }}</br>
+            </h5>
         </div><!--End Info-->
     </center><!--End InvoiceTop-->
 
@@ -126,7 +127,15 @@
                 @if(count($order->orders) > 0)
                     @foreach($order->orders as $key=>$item)
                         <tr class="service">
-                            <td class="tableitem"><p class="itemtext">{{$item->product->product_name}}</p></td>
+                            <td class="tableitem">
+                                <p class="itemtext">
+                                    {{ $item->product->product_name ?? 'N/A' }}
+                                    @if($item->variant_id)
+                                        <br>
+                                        ({{ $item->variant->variant_name ?? '' }} : {{ $item->variant->variant_value ?? '' }})
+                                    @endif
+                                </p>
+                            </td>
                             <td class="tableitem"><p class="itemtext">{{$item->qty}}</p></td>
                             <td class="tableitem"><p class="itemtext">{{$item->unit_total}} BDT</p></td>
                         </tr>
@@ -140,7 +149,7 @@
                 <tr class="tabletitle">
                     <td></td>
                     <td class="Rate"><h2>Delivery Charge</h2></td>
-                    <td class="payment"><h2>{{ $order->delivery_charge ?? 0 }} %</h2></td>
+                    <td class="payment"><h2>{{ $order->delivery_charge ?? 0 }} BDT</h2></td>
                 </tr>
 
                 <tr class="tabletitle">

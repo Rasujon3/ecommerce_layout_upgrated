@@ -38,6 +38,7 @@ class SettingController extends Controller
             $defaults = [
                 'courier_api_key'       => $data ? $data->courier_api_key : null,
                 'courier_secret'        => $data ? $data->courier_secret : null,
+                'merchant_id'           => $data ? $data->merchant_id : null,
                 'order_note'            => $data ? $data->order_note : null,
                 'facebook_pixel_id'     => $data ? $data->facebook_pixel_id : null,
                 'pathao_client_id'      => $data ? $data->pathao_client_id : null,
@@ -60,6 +61,7 @@ class SettingController extends Controller
                     'user_id'              => user()->id,
                     'courier_api_key'      => $request->courier_api_key ?? $defaults['courier_api_key'],
                     'courier_secret'       => $request->courier_secret ?? $defaults['courier_secret'],
+                    'merchant_id'          => $request->merchant_id ?? $defaults['merchant_id'],
                     'order_note'           => $request->order_note ?? $defaults['order_note'],
                     'facebook_pixel_id'    => $request->facebook_pixel_id ?? $defaults['facebook_pixel_id'],
                     'pathao_client_id'     => $request->pathao_client_id ?? $defaults['pathao_client_id'],

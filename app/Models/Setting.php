@@ -15,6 +15,7 @@ class Setting extends Model
         'app_logo',
         'courier_api_key',
         'courier_secret',
+        'merchant_id',
         'facebook_pixel_id',
         'order_note',
         'privacy_policy',
@@ -33,7 +34,7 @@ class Setting extends Model
         'instagram_url',
         'youtube_url',
         'terms_conditions',
-        'refund_policy', 
+        'refund_policy',
         'inside_delivery_charge',
         'outside_delivery_charge',
     ];
