@@ -49,11 +49,12 @@
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-4 invoice-col">
-                  
+
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-4 invoice-col">
                   <b>Invoice #Order00{{$order->id}}</b><br>
+                  <b>Payment Status: {!! !empty($order->transaction_hash) ? 'Paid' : 'Due' !!}</b><br>
                   <b>Payment Method: {{$order->payment_method}}</b><br>
                   <b>Transaction Hash: {{$order->transaction_hash}}</b><br>
                   <br>
@@ -83,7 +84,15 @@
                     @foreach($order->orders as $key=>$item)
                     <tr>
                       <td>{{$key+1}}</td>
-                      <td>{{$item->product->product_name}} @if($item->variant_id != null) ({{$item->variant->variant_name}}: {{$item->variant->variant_value}}) @endif</td>
+                      <td>
+                          {{$item->product->product_name}}
+                          @if($item->variantIds && count($item->variantIds) > 0)
+                              <br/>
+                              @foreach($item->variantIds as $v)
+                                  <small>({{ $v->variant->variant_name }}: {{ $v->variant->variant_value }})</small><br/>
+                              @endforeach
+                          @endif
+                      </td>
                       <td>{{$item->product_price}}</td>
                       <td>{{$item->qty}}</td>
                       <td>{{$item->unit_total}} BDT</td>
@@ -99,7 +108,7 @@
               <div class="row">
                 <!-- accepted payments column -->
                 <div class="col-6">
-                  
+
                 </div>
                 <!-- /.col -->
                 <div class="col-6">
@@ -115,7 +124,7 @@
                       <tr>
                         <th style="width:50%">Delivery Charge:</th>
                         @if($order->delivery_charge != NULL)
-                         <td>{{$order->delivery_charge}} BDT</td> 
+                         <td>{{$order->delivery_charge}} BDT</td>
                         @else
                          <td>Free</td>
                         @endif

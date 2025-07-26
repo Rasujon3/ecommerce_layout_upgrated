@@ -196,7 +196,7 @@ class SettingController extends Controller
                     $btn .= '&nbsp;';
 
 
-                    # $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-product action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>';
+                    $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-payment-info action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>';
 
 
 
@@ -408,5 +408,28 @@ class SettingController extends Controller
             ->firstOrFail();
 
         return view('purchaseHistory.view_purchase_history', compact('payment'));
+    }
+
+    public function deletePaymentInfo(PaymentInfo $paymentInfo)
+    {
+        try
+        {
+            $paymentInfo->delete();
+            return response()->json(['status'=>true, 'message'=>'Successfully the payment has been deleted']);
+        }catch(Exception $e){
+            // Log the error
+            Log::error('Error in deleting payment info: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $notification=array(
+                'messege'=>'Something went wrong!!!',
+                'alert-type'=>'error'
+            );
+            return redirect()->back()->with($notification);
+        }
     }
 }

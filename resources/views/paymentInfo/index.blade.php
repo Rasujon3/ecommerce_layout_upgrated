@@ -97,7 +97,7 @@
        });
 
 
-       $(document).on('click', '.delete-service', function(e){
+       $(document).on('click', '.delete-payment-info', function(e){
 
            e.preventDefault();
 
@@ -107,7 +107,7 @@
            {
                $.ajax({
 
-                    url: "{{url('/services')}}/"+service_id,
+                    url: "{{url('/payment-info')}}/"+service_id,
 
                          type:"DELETE",
                          dataType:"json",

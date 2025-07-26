@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\OrderVariantId;
 use App\Models\PaymentInfo;
 use App\Models\WebsitePurchase;
 use Exception;
@@ -154,9 +155,9 @@ class ApiController extends Controller
 
 
 	        $domain = Domain::with('theme')->where('domain',$request->domain)->first();
-	        
+
 	        if($request->domain == 'dummy')
-	        {    
+	        {
 	            $user = User::findorfail($request->user_id);
 	            $infoData = Setting::where('user_id',$request->user_id)->first();
 	            $domain = Domain::with('theme')->where('user_id',$request->user_id)->first();
@@ -190,10 +191,10 @@ class ApiController extends Controller
 	                'data' => $validator->errors()
 	            ], 422);
 	        }
-	        
-	 
+
+
 	        $domain = domainDetails($request);
-	        
+
 	        if($request->has('user_id'))
 	        {
 	            $sliders = Slider::where('user_id',$request->user_id)->where('status','Active')->get();
@@ -201,7 +202,7 @@ class ApiController extends Controller
 	            $sliders = Slider::where('domain_id',$domain->id)->where('status','Active')->get();
 	        }
 
-	        
+
 
 	        return response()->json(['status'=>count($sliders)>0, 'total'=>count($sliders), 'data'=>$sliders]);
 
@@ -263,15 +264,15 @@ class ApiController extends Controller
 	        }
 
 	        $domain = domainDetails($request);
-	        
+
 	        if($request->has('user_id'))
 	        {
 	            $reviews = Review::where('user_id',$request->user_id)->where('status','Active')->latest()->get();
 	        }else{
-	           $reviews = Review::where('domain_id',$domain->id)->where('status','Active')->latest()->get(); 
+	           $reviews = Review::where('domain_id',$domain->id)->where('status','Active')->latest()->get();
 	        }
 
-	        
+
 
 	        return response()->json(['status'=>count($reviews)>0, 'total'=>count($reviews), 'data'=>$reviews]);
 
@@ -298,7 +299,7 @@ class ApiController extends Controller
 	        }
 
 	        $domain = domainDetails($request);
-	        
+
 	        if($request->has('user_id'))
 	        {
 	            $video = Video::where('user_id',$request->user_id)->first();
@@ -306,7 +307,7 @@ class ApiController extends Controller
 	            $video = Video::where('domain_id',$domain->id)->first();
 	        }
 
-	        
+
 
 	       // return $video;
 
@@ -319,7 +320,6 @@ class ApiController extends Controller
 
     public function saveOrder(Request $request)
 	{
-	    DB::beginTransaction();
 	    try
 	    {
 	        $validator = Validator::make($request->all(), [
@@ -348,6 +348,8 @@ class ApiController extends Controller
 	            ], 422);
 	        }
 
+            DB::beginTransaction();
+
 	        $domain = domainDetails($request);
 
 	        $orderDetail = new Orderdetail();
@@ -369,11 +371,22 @@ class ApiController extends Controller
 	            $order = new Order();
 	            $order->orderdetail_id = $orderDetail->id;
 	            $order->product_id = $item['product_id'];
-	            $order->variant_id = $item['variant_id'] ?? null;
+	            # $order->variant_id = $item['variant_id'] ?? null;
 	            $order->product_price = $item['product_price'];
 	            $order->qty = $item['qty'];
 	            $order->unit_total = $item['unit_total'];
 	            $order->save();
+
+                $variantIds = $item['variant_id'] ?? [];
+                if (is_array($variantIds) && count($variantIds) > 0) {
+                    foreach ($variantIds as $vid) {
+                        OrderVariantId::create([
+                            'order_id' => $order->id,
+                            'product_id' => $item['product_id'],
+                            'variant_id' => $vid
+                        ]);
+                    }
+                }
 	        }
 
 	        if($request->has('refer_code'))
@@ -397,6 +410,7 @@ class ApiController extends Controller
 	        DB::rollBack();
 	        return response()->json([
 	            'status' => false,
+	            'line' => $e->getLine(),
 	            'code' => $e->getCode(),
 	            'message' => $e->getMessage()
 	        ], 500);
@@ -928,7 +942,7 @@ class ApiController extends Controller
             return $this->sendResponse(false, 'Something went wrong!!!', [], 500);
         }
     }
-    
+
     public function getToken()
     {
         $credentials = [
@@ -989,9 +1003,9 @@ class ApiController extends Controller
             ], 500);
         }
     }
-    
+
     public function userPaymentStore(Request $request)
-    {   
+    {
         DB::beginTransaction();
         try
         {
@@ -999,9 +1013,9 @@ class ApiController extends Controller
                 'gateway_order_id' => 'required|string|unique:website_purchases',
                 'user_id' => 'required|integer|exists:users,id',
                 'token' => 'required|string',
-            
+
             ]);
-    
+
             if ($validator->fails()) {
                 DB::commit();
                 return response()->json([
@@ -1010,19 +1024,19 @@ class ApiController extends Controller
                     'errors'  => $validator->errors()
                 ], 422);
             }
-            
+
             $user = User::findorfail($request->user_id);
-            
+
             $domain = Domain::where('user_id',$user->id)->first();
-            
+
             if(!$domain)
             {
                 return response()->json(['status'=>false, 'message'=>'No domain found'],404);
             }
-            
+
             //$domain = Domain::where('domain', $request->domain_name)->first();
-            
-            
+
+
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
@@ -1042,15 +1056,15 @@ class ApiController extends Controller
                 "Authorization: Bearer {$request->token}"
               ),
             ));
-            
+
             $response = curl_exec($curl);
-            
+
             curl_close($curl);
-            
+
             $result = json_decode($response,true);
-            
+
             //return $result;
-            
+
             $purchase = WebsitePurchase::create([
                 'domain_id'        => $domain->id,
                 'user_id'          => $user->id,
@@ -1060,15 +1074,15 @@ class ApiController extends Controller
                 'transaction_hash' => $result[0]['bank_trx_id'],
                 'status'           => $result[0]['transaction_status'] == 'Incomplete'?"pending":"approved",
             ]);
-            
+
             if($purchase->transaction_hash != NULL)
             {
                 Product::where('user_id',$request->user_id)->update(['status'=>'Active']);
                 Domain::where('user_id',$request->user_id)->update(['status'=>'Active']);
                 User::where('id',$request->user_id)->update(['status'=>'Active']);
             }
-            
-            
+
+
             DB::commit();
 
             return response()->json([
@@ -1076,9 +1090,9 @@ class ApiController extends Controller
                 'message' => $result[0]['transaction_status'] == 'Incomplete'?"Failed to purchase":"Website purchase created successfully.",
                 'data'    => $purchase,
             ], 200);
-            
-            
-            
+
+
+
         }catch (\Exception $e) {
             // Log the error
             Log::error('ShurjoPay token error: ', [
@@ -1095,7 +1109,7 @@ class ApiController extends Controller
             ], 500);
         }
     }
-    
+
     public function whyChooseUs(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -1182,8 +1196,8 @@ class ApiController extends Controller
             return $this->sendResponse(false, 'Something went wrong!!!', [], 500);
         }
     }
-    
-    
+
+
     public function getDeliveryCharges(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -1229,7 +1243,7 @@ class ApiController extends Controller
             ], 500);
         }
     }
-    
+
     public function findDeliveryCharge(Request $request)
     {
         try
@@ -1246,15 +1260,15 @@ class ApiController extends Controller
                     'errors'  => $validator->errors()
                 ], 422);
             }
-            
+
             //$data = DB::table('ariadhakas')->where('area_name',$request->district)->where('user_id',$request->user_id)->first();
             $getCharge = DB::table('ariadhakas')->where('user_id',$request->user_id)->first();
-            
+
             if(!$getCharge)
             {
                 return response()->json(['status'=>true, 'data'=>array('delivery_charge'=>"0")]);
             }
-            
+
             if($request->district == $getCharge->area_name)
             {
                 $delivery_charge = $getCharge->inside_delivery_charges;

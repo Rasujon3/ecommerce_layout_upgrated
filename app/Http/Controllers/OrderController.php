@@ -66,7 +66,7 @@ class OrderController extends Controller
 
 
                     ->addColumn('courier_status', function($row) {
-                        
+
                         // $courier = courier($row->id);
                         // $apiKey = setting()->courier_api_key;
                         // $apiSecret = setting()->courier_secret;
@@ -102,6 +102,10 @@ class OrderController extends Controller
                         // }
 
                         return "<button type='button' class='btn btn-success see-order-status order_status_btn_".$row->id."' data-id='".$row->id."'>See Status</button>";
+                    })
+
+                    ->addColumn('payment_status', function($row){
+                        return !empty($row->transaction_hash) ? 'Paid' : 'Due';
                     })
 
                     ->addColumn('action', function($row){
@@ -167,8 +171,8 @@ class OrderController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
-    
-    
+
+
     public function seeOrderStatus(Request $request)
     {
         try
@@ -233,8 +237,10 @@ class OrderController extends Controller
     {
         try
         {
-            $order = Orderdetail::with('orders')->findorfail($id);
-            //return $order;
+            $order = Orderdetail::with([
+                'orders.product',
+                'orders.variantIds.variant'
+            ])->findOrFail($id);
             return view('orders.invoice',compact('order'));
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);

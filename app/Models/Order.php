@@ -23,4 +23,8 @@ class Order extends Model
     {
     	return $this->belongsTo(Variant::class);
     }
+    public function variantIds()
+    {
+        return $this->hasMany(OrderVariantId::class);
+    }
 }

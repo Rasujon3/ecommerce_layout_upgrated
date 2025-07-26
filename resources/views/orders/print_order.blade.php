@@ -6,6 +6,11 @@
     <title>Admin | Dashboard</title>
 
     <style>
+        body {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
         #invoice-POS{
             box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
             padding:2mm;
@@ -118,6 +123,7 @@
 
         <div id="table">
             <table>
+                {{--
                 <tr class="tabletitle">
                     <td class="item"><h2>Item</h2></td>
                     <td class="Hours"><h2>Qty</h2></td>
@@ -149,13 +155,18 @@
                 <tr class="tabletitle">
                     <td></td>
                     <td class="Rate"><h2>Delivery Charge</h2></td>
+                    @if($order->delivery_charge != NULL)
                     <td class="payment"><h2>{{ $order->delivery_charge ?? 0 }} BDT</h2></td>
+                    @else
+                        <td>Free</td>
+                    @endif
                 </tr>
+                --}}
 
-                <tr class="tabletitle">
+                <tr class="" style="border: 1px solid #000;">
                     <td></td>
                     <td class="Rate"><h2>Total</h2></td>
-                    <td class="payment"><h2>{{$order->sub_total}} BDT</h2></td>
+                    <td class="payment"><h2>{{ $order->total }} BDT</h2></td>
                 </tr>
 
             </table>

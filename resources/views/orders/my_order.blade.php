@@ -38,8 +38,8 @@
                           <label for="from_date">From Date</label>
                           <input type="date" class="form-control" id="from_date" required=""/>
                         </div>
-                        
-                      </div> 
+
+                      </div>
 
 
                       <div class="col-md-4">
@@ -47,8 +47,8 @@
                           <label for="to_date">To Date</label>
                           <input type="date" class="form-control" id="to_date" required=""/>
                         </div>
-                        
-                      </div> 
+
+                      </div>
 
 
                       <div class="col-md-4">
@@ -61,14 +61,14 @@
                            <option value="Cancel">Cancel</option>
                           </select>
                         </div>
-                        
+
                       </div>
 
                       <div class="col-md-12">
 
                         <button type="button" class="btn btn-primary btn-block filter-order"><i class="fa fa-search"></i> SEARCH</button>
 
-                       
+
 
                      </div>
 
@@ -82,6 +82,7 @@
                                 <th>Order ID</th>
                                 <th>Date</th>
                                 <th>Customer Name</th>
+                                <th>Payment Status</th>
                                 <th>Customer Phone</th>
                                 <th>Total (BDT)</th>
                                 <th>Order Status</th>
@@ -89,9 +90,9 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody class="conts"> 
+                        <tbody class="conts">
                         </tbody>
-                    </table> 
+                    </table>
                 </div>
             </div>
         </div>
@@ -140,7 +141,7 @@
 @endsection
 
 @push('scripts')
-  
+
   <script>
     $(document).ready(function(){
       let order_id;
@@ -167,6 +168,7 @@
                 {data: 'order_id', name: 'order_id'},
                 {data: 'order_date', name: 'order_date'},
                 {data: 'customer_name', name: 'customer_name'},
+                {data: 'payment_status', name: 'payment_status'},
                 {data: 'customer_phone', name: 'customer_phone'},
                 {data: 'total', name: 'total'},
                 {data: 'status', name: 'status'},
@@ -177,7 +179,7 @@
 
        $('.filter-order').click(function(e){
           e.preventDefault();
-          orderTable.draw(); 
+          orderTable.draw();
       });
 
 
@@ -185,7 +187,7 @@
 
            order_id = $(this).data('id');
            var status_val = $(this).val();
-  
+
            if(confirm('Do you want to change the status?'))
            {
               $.ajax({
@@ -202,10 +204,10 @@
                         $('.data-table').DataTable().ajax.reload(null, false);
 
                 },
-                              
+
              });
            }
-       }); 
+       });
 
 
        $(document).on('click', '.delete-order', function(e){
@@ -229,13 +231,13 @@
                             $('.data-table').DataTable().ajax.reload(null, false);
 
                     },
-                                
+
               });
            }
 
        });
-       
-       
+
+
        $(document).on('click', '.see-order-status', function(e){
            e.preventDefault();
            order_id = $(this).data('id');
@@ -252,9 +254,9 @@
                    $('.order_status_btn_'+order_id).html(data);
 
             },
-                              
+
           });
-          
+
        });
 
 
@@ -272,7 +274,7 @@
                    $('#total').val(data.total);
 
             },
-                              
+
           });
           $('#discountModal').show();
        });
@@ -318,7 +320,7 @@
                         $('#discountModal').hide();
 
                 },
-                                
+
             });
          }
       });

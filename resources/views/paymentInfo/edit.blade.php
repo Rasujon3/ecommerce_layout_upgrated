@@ -66,6 +66,7 @@
                                         <option value="" selected="" disabled="">Select Payment Type</option>
                                         <option value="Personal" @if($paymentInfo->payment_type === 'Personal') selected @endif>Personal</option>
                                         <option value="Agent" @if($paymentInfo->payment_type === 'Agent') selected @endif>Agent</option>
+                                        <option value="Merchant" @if($paymentInfo->payment_type === 'Merchant') selected @endif>Merchant</option>
                                     </select>
                                     @error('payment_type')
                                     <span class="alert alert-danger">{{ $message }}</span>

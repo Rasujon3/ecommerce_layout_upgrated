@@ -66,6 +66,7 @@
                                     <option value="" selected="" disabled="">Select Payment Type</option>
                                     <option value="Personal">Personal</option>
                                     <option value="Agent">Agent</option>
+                                    <option value="Merchant">Merchant</option>
                                 </select>
                                 @error('payment_type')
                                     <span class="alert alert-danger">{{ $message }}</span>
