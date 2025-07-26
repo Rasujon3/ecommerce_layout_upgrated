@@ -234,6 +234,28 @@
            }
 
        });
+       
+       
+       $(document).on('click', '.see-order-status', function(e){
+           e.preventDefault();
+           order_id = $(this).data('id');
+           $('.order_status_btn_'+order_id).text('Please Wait...');
+           $.ajax({
+
+            url: "{{url('/see-order-status')}}",
+
+                 type:"POST",
+                 data:{'order_id':order_id},
+                 dataType:"json",
+                 success:function(data) {
+                   console.log(data);
+                   $('.order_status_btn_'+order_id).html(data);
+
+            },
+                              
+          });
+          
+       });
 
 
        $(document).on('click', '.customer-discount', function(e){

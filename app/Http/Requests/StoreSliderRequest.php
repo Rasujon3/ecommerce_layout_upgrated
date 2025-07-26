@@ -25,8 +25,8 @@ class StoreSliderRequest extends FormRequest
     {
         return [
             //'domain_id' => 'required|integer|exists:domains,id',
-            'title' => 'required|string|unique:sliders',
-            'sub_title' => 'required|string|unique:sliders',
+            'title' => 'required|string',
+            'sub_title' => 'required|string',
             'image' => 'required',
             'status' => 'required|in:Active,Inactive',
         ];

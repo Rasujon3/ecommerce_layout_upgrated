@@ -79,7 +79,7 @@
               <div class="row">
                 <div class="col-12">
                   <h4>
-                    <i class="fas fa-globe"></i> Ecommerce Layout.
+                    <i class="fas fa-globe"></i> {{$order->domain->shop_name}}
                     <small class="float-right">Date: {{$order->created_at->format('d F Y')}}</small>
                   </h4>
                 </div>
@@ -102,8 +102,11 @@
                 <!-- /.col -->
                 <div class="col-sm-4 invoice-col">
                   <b>Invoice #Order00{{$order->id}}</b><br>
+                  <b>Payment Method: {{$order->payment_method}}</b><br>
+                  <b>Transaction Hash: {{$order->transaction_hash}}</b><br>
                   <br>
-                  <b>Order ID:</b> {{$order->id}}<br>
+                  <b>Order ID:</b> {{$order->courier?$order->courier->consignment_id:$order->id}}<br>
+                  <b>Order Note:</b> {{$order->order_note}}<br>
                   <b>Order Status:</b> {{$order->status}}<br>
 
                 </div>
@@ -186,6 +189,7 @@
               </div>
               <!-- /.row -->
 
+              
             </div>
             <!-- /.invoice -->
           </div><!-- /.col -->

@@ -148,11 +148,11 @@ class AjaxController extends Controller
                         $product->update();
                     }
                     
-                    if($variant)
-                    {
-                        $variant->stock_qty-=$row->qty;
-                        $variant->update();
-                    }
+                    // if($variant)
+                    // {
+                    //     $variant->stock_qty-=$row->qty;
+                    //     $variant->update();
+                    // }
                     
                 }
             }
@@ -270,5 +270,33 @@ class AjaxController extends Controller
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
+    }
+    
+    public function deleteFullVariant(Request $request)
+    {
+        try
+        {   
+            $variant = Variant::findorfail($request->variant_id);
+            Variant::where('variant_name',$variant->variant_name)->where('product_id',$request->product_id)->delete();
+            return response()->json(['status' => true, 'message'=>'Successfully the variant has been deleted']);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+    
+    public function storeUnit(Request $request)
+    {
+        try
+        {
+            $unit = new Unit();
+            $unit->user_id = $request->user_id; 
+            $unit->domain_id = $request->domain_id;
+            $unit->title = $request->title;
+            $unit->status = $request->status;
+            $unit->save();
+            return response()->json(['status'=>true, 'unit_id'=>intval($unit->id), 'unit_title'=>$unit->title, 'units'=>units(), 'message'=>'Successfully a unit has been added']);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        } 
     }
 }

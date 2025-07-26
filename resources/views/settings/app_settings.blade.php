@@ -11,9 +11,9 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{URL::to('/dashboard')}}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{URL::to('/app-settings')}}">Delivery partners
+                        <li class="breadcrumb-item"><a href="{{URL::to('/app-settings')}}">Delivery partnes
                                 </a></li>
-                        <li class="breadcrumb-item active">Delivery partners</li>
+                        <li class="breadcrumb-item active">Delivery partnes</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -24,7 +24,7 @@
     <section class="content">
         <div class="card card-success">
             <div class="card-header">
-                <h3 class="card-title">Delivery partners</h3>
+                <h3 class="card-title">Delivery partnes</h3>
             </div>
             <!-- /.card-header -->
             <!-- form start -->
@@ -32,11 +32,11 @@
                 @csrf
                 <div class="card-body">
                     <div class="row">
-
-                        <div class="col-md-6">
+                        
+                        <div class="col-md-12">
                           <div class="card">
                             <div class="card-header bg-primary">
-                              <h5 class="card-title">SteadFast</h5>
+                              <h5 class="card-title">SteadFast</h5>  
                             </div>
                             <div class="card-body">
                               <div class="form-group">
@@ -46,7 +46,7 @@
                                 @error('courier_api_key')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
-                              </div>
+                              </div>  
 
                               <div class="form-group">
                                 <label for="courier_secret">API Secret <span class="required">*</span></label>
@@ -60,21 +60,21 @@
                               <div class="form-group">
                                 <label for="merchant_id">Merchant ID <span class="required">*</span></label>
                                 <input type="text" name="merchant_id" class="form-control" id="merchant_id"
-                                    placeholder="API Secret"  value="{{old('merchant_id',$setting ? $setting->merchant_id : "")}}">
+                                    placeholder="Merchant ID"  value="{{old('merchant_id',$setting ? $setting->merchant_id : "")}}">
                                 @error('merchant_id')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
                              </div>
 
-                            </div>
-                          </div>
+                            </div>  
+                          </div>  
                         </div>
 
 
-                        <div class="col-md-6">
+                        <div class="col-md-6 d-none">
                           <div class="card">
                             <div class="card-header bg-info">
-                              <h5 class="card-title">Pathao</h5>
+                              <h5 class="card-title">Pathao</h5>  
                             </div>
                             <div class="card-body">
                               <div class="form-group">
@@ -84,7 +84,7 @@
                                 @error('pathao_client_id')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
-                              </div>
+                              </div>  
 
                               <div class="form-group">
                                 <label for="pathao_client_secret">Client Secret <span class="required">*</span></label>
@@ -103,15 +103,15 @@
                                 @enderror
                              </div>
 
-                            </div>
-                          </div>
+                            </div>  
+                          </div>  
                         </div>
 
 
                         <div class="col-md-4 d-none">
                           <div class="card">
                             <div class="card-header bg-warning">
-                              <h5 class="card-title text-light">Others</h5>
+                              <h5 class="card-title text-light">Others</h5>  
                             </div>
                             <div class="card-body">
                               <div class="form-group">
@@ -121,7 +121,7 @@
                                 @error('facebook_pixel_id')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
-                               </div>
+                               </div>  
 
 
                                <div class="form-group">
@@ -140,13 +140,13 @@
                                 @error('order_note')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
-                              </div>
+                              </div>    
 
 
-                            </div>
-                          </div>
+                            </div>  
+                          </div>  
                         </div>
-
+                        
                         <div class="form-group w-100 px-2">
                             <button type="submit" class="btn btn-success btn-block">Save Changes</button>
                         </div>

@@ -24,7 +24,7 @@ class StoreUnitRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required|string|max:50|unique:units',
+            'title' => 'required|string|max:50',
             'status' => 'required|in:Active,Inactive',
         ]; 
     }

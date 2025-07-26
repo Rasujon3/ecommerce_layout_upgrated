@@ -25,8 +25,8 @@ class UpdateSliderRequest extends FormRequest
     {
         return [
             //'domain_id' => 'required|integer|exists:domains,id',
-            'title' => 'required|string|unique:sliders,title,' . $this->slider->id,
-            'sub_title' => 'required|string|unique:sliders,sub_title,' . $this->slider->id,
+            'title' => 'required|string',
+            'sub_title' => 'required|string',
             'image' => 'nullable',
             'status' => 'required|in:Active,Inactive',
         ]; 

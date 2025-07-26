@@ -26,7 +26,7 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-            <a href="{{ route('payment-info.create') }}" class="btn btn-primary add-new mb-2">Add New Payment Info</a>
+                <a href="{{route('payment-info.create')}}" class="btn btn-primary add-new mb-2">Add New Payment Info</a>
                 <div class="fetch-data table-responsive">
                     <table id="payment-info-table" class="table table-bordered table-striped data-table">
                         <thead>

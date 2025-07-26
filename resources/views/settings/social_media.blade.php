@@ -45,9 +45,9 @@
 
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="twitter_url">Twitter <span class="required">*</span></label>
+                                <label for="twitter_url">Tiktok <span class="required">*</span></label>
                                 <input type="text" name="twitter_url" class="form-control" id="twitter_url"
-                                    placeholder="Twitter"  value="{{old('twitter_url',$setting?$setting->twitter_url:"")}}">
+                                    placeholder="Tiktok"  value="{{old('twitter_url',$setting?$setting->twitter_url:"")}}">
                                 @error('twitter_url')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror

@@ -25,5 +25,5 @@ class Ariadhaka extends Model
     protected $hidden = [
         'area_type',
     ];
-
+    
 }

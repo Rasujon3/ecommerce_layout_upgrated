@@ -37,8 +37,8 @@
                     </a>
 
                     <a
-                        href="https://hosstify.com/confirmation?domain={{ $userInfo->domain?->domain }}&package_id={{$userInfo->domain?->package_id}}"
-                        class="btn btn-warning add-new mb-2 ml-2"
+                        href="https://hosstify.com/confirmation?domain={{ $userInfo->domain?->domain }}&package_id={{$userInfo->domain?->package_id}}&user_id={{$userInfo->id}}"
+                        class="btn btn-warning add-new mb-2 ml-2 d-none"
                         target="_blank"
                     >
                         Purchase

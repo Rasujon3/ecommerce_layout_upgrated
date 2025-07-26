@@ -13,6 +13,7 @@ use App\Http\Requests\UpdateProductRequest;
 use DataTables;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Package;
 
 class ProductController extends Controller
 {
@@ -105,7 +106,18 @@ class ProductController extends Controller
         DB::beginTransaction();
         try
         {
-
+            
+            $package = Package::where('id',getDomain()->package_id)->first();
+            $count = Product::where('user_id',user()->id)->count();
+            if($count > $package->max_product)
+            {
+                $notification=array(
+                 'messege'=>'Product Upload Quota Exceeded',
+                 'alert-type'=>'error',
+                );
+               DB::commit();
+               return redirect()->back()->with($notification);
+            }
             $product = new Product();
             $product->user_id = user()->id;
             $product->domain_id = getDomain()->id;
@@ -134,7 +146,7 @@ class ProductController extends Controller
                 'alert-type'=>'success',
             );
             DB::commit();
-            return redirect('/products')->with($notification);
+            return redirect('/add-variant/'.$product->id)->with($notification);
 
         }catch(Exception $e){
             DB::rollback();
@@ -217,8 +229,8 @@ class ProductController extends Controller
         {
             $demo_url = config('services.demo.url'); // ex: ?user_id=101
             $userId = Auth::user()->id;
-            $domain = Domain::where('user_id', $userId)->first('domain');
-            $prepare_url = "$demo_url?user_id=$userId";
+            $domain = Domain::where('user_id', $userId)->first();
+            $prepare_url = "$demo_url?user_id=$userId&domain=$domain->domain&package_id=$domain->package_id";
 
             return redirect()->away($prepare_url);
         } catch(Exception $e) {

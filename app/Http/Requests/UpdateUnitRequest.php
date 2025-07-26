@@ -24,7 +24,7 @@ class UpdateUnitRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required|string|max:50|unique:units,title,' . $this->unit->id,
+            'title' => 'required|string|max:50',
             'status' => 'required|in:Active,Inactive', 
         ];
     }

@@ -13,6 +13,7 @@ class WebsitePurchase extends Model
 
     protected $fillable = [
         'domain_id',
+        'gateway_order_id',
         'user_id',
         'package_id',
         'theme',

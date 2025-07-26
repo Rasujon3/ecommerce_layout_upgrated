@@ -83,8 +83,8 @@
                     </a>
 
                     <a
-                        href="https://hosstify.com/confirmation?domain={{ $userInfo->domain?->domain }}&package_id={{$userInfo->domain?->package_id}}"
-                        class="btn btn-warning add-new mb-2 ml-2"
+                        href="https://hosstify.com/confirmation?domain={{ $userInfo->domain?->domain }}&package_id={{$userInfo->domain?->package_id}}&user_id={{$userInfo->id}}"
+                        class="btn btn-warning add-new mb-2 ml-2 d-none"
                         target="_blank"
                     >
                         Purchase
@@ -268,6 +268,15 @@
               </p>
             </a>
           </li>
+          
+          <li class="nav-item">
+            <a href="{{ route('why_choose_us.index') }}" class="nav-link">
+              <i class="nav-icon fas fa-cog"></i>
+              <p>
+                Why Choose Us
+              </p>
+            </a>
+          </li>
 
       @else
        @if(user()->role_id == 1)
@@ -434,12 +443,12 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-                {{--<li class="nav-item">
-                  <a href="{{route('ariadhakas.create')}}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Add Area</p>
-                  </a>
-                </li>--}}
+              {{--<li class="nav-item">
+                <a href="{{route('ariadhakas.create')}}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Add Area</p>
+                </a>
+              </li>--}}
               <li class="nav-item">
                 <a href="{{route('ariadhakas.index')}}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
@@ -591,6 +600,15 @@
               </p>
             </a>
           </li>
+          
+          <li class="nav-item">
+            <a href="{{ route('why_choose_us.index') }}" class="nav-link">
+              <i class="nav-icon fas fa-cog"></i>
+              <p>
+                Why Choose Us
+              </p>
+            </a>
+          </li>
 
           @endif
 
@@ -603,6 +621,9 @@
               </p>
             </a>
           </li>
+          
+          
+          
 
           @endif
 
@@ -654,17 +675,10 @@
               </p>
             </a>
           </li>
-
-          <li class="nav-item">
-            <a href="{{ route('why_choose_us.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-cog"></i>
-              <p>
-                Why Choose Us
-              </p>
-            </a>
-          </li>
-
-           @if(user()->role_id == 1)
+          
+          
+          
+          @if(user()->role_id == 1)
               <li class="nav-item">
                 <a href="{{ route('banner.index') }}" class="nav-link">
                   <i class="nav-icon fas fa-cog"></i>

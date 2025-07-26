@@ -18,6 +18,7 @@ class Orderdetail extends Model
     {
     	return $this->hasOne(Courier::class);
     }
+    
     public function domain()
     {
         return $this->belongsTo(Domain::class);

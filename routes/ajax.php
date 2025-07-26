@@ -18,3 +18,8 @@ Route::post('/delete-variant', [AjaxController::class, 'deleteVariant']);
 Route::post('user-status-update', [AjaxController::class, 'userStatusUpdate']);
 Route::post('order-details', [AjaxController::class, 'orderDetails']);
 Route::post('order-custom-discount', [AjaxController::class, 'orderCustomDiscount']);
+
+Route::post('/delete-full-variant', [AjaxController::class, 'deleteFullVariant']);
+
+
+Route::post('store-unit', [AjaxController::class, 'storeUnit']);

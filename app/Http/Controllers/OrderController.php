@@ -66,41 +66,42 @@ class OrderController extends Controller
 
 
                     ->addColumn('courier_status', function($row) {
-                        $courier = courier($row->id);
-                        $apiKey = setting()->courier_api_key;
-                        $apiSecret = setting()->courier_secret;
-                        if($courier)
-                        {
-                            $curl = curl_init();
+                        
+                        // $courier = courier($row->id);
+                        // $apiKey = setting()->courier_api_key;
+                        // $apiSecret = setting()->courier_secret;
+                        // if($courier)
+                        // {
+                        //     $curl = curl_init();
 
-                            curl_setopt_array($curl, array(
-                                CURLOPT_URL => "https://portal.packzy.com/api/v1/status_by_cid/{$courier->consignment_id}",
-                                CURLOPT_RETURNTRANSFER => true,
-                                CURLOPT_ENCODING => '',
-                                CURLOPT_MAXREDIRS => 10,
-                                CURLOPT_TIMEOUT => 0,
-                                CURLOPT_FOLLOWLOCATION => true,
-                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                CURLOPT_CUSTOMREQUEST => 'GET',
-                                CURLOPT_HTTPHEADER => array(
-                                    'Accept: application/json',
-                                    'Content-Type: application/json',
-                                    "Api-Key: $apiKey",
-                                    "Secret-Key: $apiSecret"
-                                ),
-                            ));
+                        //     curl_setopt_array($curl, array(
+                        //         CURLOPT_URL => "https://portal.packzy.com/api/v1/status_by_cid/{$courier->consignment_id}",
+                        //         CURLOPT_RETURNTRANSFER => true,
+                        //         CURLOPT_ENCODING => '',
+                        //         CURLOPT_MAXREDIRS => 10,
+                        //         CURLOPT_TIMEOUT => 0,
+                        //         CURLOPT_FOLLOWLOCATION => true,
+                        //         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        //         CURLOPT_CUSTOMREQUEST => 'GET',
+                        //         CURLOPT_HTTPHEADER => array(
+                        //             'Accept: application/json',
+                        //             'Content-Type: application/json',
+                        //             "Api-Key: $apiKey",
+                        //             "Secret-Key: $apiSecret"
+                        //         ),
+                        //     ));
 
-                            $response = curl_exec($curl);
+                        //     $response = curl_exec($curl);
 
-                            $result = json_decode($response,true);
+                        //     $result = json_decode($response,true);
 
-                            return $result['delivery_status'];
+                        //     return $result['delivery_status'];
 
-                        }else{
-                            return "-";
-                        }
+                        // }else{
+                        //     return "-";
+                        // }
 
-
+                        return "<button type='button' class='btn btn-success see-order-status order_status_btn_".$row->id."' data-id='".$row->id."'>See Status</button>";
                     })
 
                     ->addColumn('action', function($row){
@@ -162,6 +163,50 @@ class OrderController extends Controller
                     ->make(true);
             }
             return view('orders.my_order');
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+    
+    
+    public function seeOrderStatus(Request $request)
+    {
+        try
+        {
+            $row = Orderdetail::findorfail($request->order_id);
+            $courier = courier($row->id);
+            $apiKey = setting()->courier_api_key;
+            $apiSecret = setting()->courier_secret;
+            if($courier)
+            {
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => "https://portal.packzy.com/api/v1/status_by_cid/{$courier->consignment_id}",
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'GET',
+                    CURLOPT_HTTPHEADER => array(
+                        'Accept: application/json',
+                        'Content-Type: application/json',
+                        "Api-Key: $apiKey",
+                        "Secret-Key: $apiSecret"
+                    ),
+                ));
+
+                $response = curl_exec($curl);
+
+                $result = json_decode($response,true);
+
+                return response()->json($result['delivery_status']);
+
+            }else{
+                return response()->json("Pending");
+            }
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }

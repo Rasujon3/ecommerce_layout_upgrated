@@ -21,7 +21,8 @@ class IndexController extends Controller
 			if($user->status == 'Inactive')
 			{
 				Auth::login($user);
-				return redirect('/products');
+				//return redirect('/products');
+				return redirect('/dashboard');
 			} 
 		}
 		
