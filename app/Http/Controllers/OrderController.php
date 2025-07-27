@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\Orderdetail;
 use App\Models\Courier;
 use DataTables;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
@@ -228,15 +229,23 @@ class OrderController extends Controller
     {
         try
         {
-            $order = Orderdetail::findorfail($id);
-            $order->orders()->delete();
-            if($order->courier)
-            {
-                $order->courier->delete();
+            DB::beginTransaction();
+            $orderDetail = Orderdetail::findOrFail($id);
+
+            foreach ($orderDetail->orders as $order) {
+                $order->variantIds()->delete();
+                $order->delete();
             }
-            $order->delete();
+
+            if ($orderDetail->courier) {
+                $orderDetail->courier->delete();
+            }
+
+            $orderDetail->delete();
+            DB::commit();
             return response()->json(['status'=>true, 'message'=>'Successfully the order has been deleted']);
         }catch(Exception $e){
+            DB::rollback();
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
