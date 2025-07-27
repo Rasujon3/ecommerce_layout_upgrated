@@ -319,63 +319,79 @@ class ApiController extends Controller
     }
 
     public function saveOrder(Request $request)
-	{
-	    try
-	    {
-	        $validator = Validator::make($request->all(), [
-	            'domain' => 'required|string|exists:domains,domain',
-	            'customer_name' => 'required|string',
-	            'customer_phone' => 'required|string',
-	            'customer_address' => 'required',
-	            'district' => 'nullable',
-	            'payment_method' => 'required|string',
-	            'sub_total' => 'required|numeric',
-	            'total' => 'required|numeric',
-	            'orders' => 'required|array|min:1',
-	            'refer_code' => 'nullable|string|exists:users,refer_code',
-	            'delivery_charge' => 'nullable|numeric',
-	            'transaction_hash' => 'nullable|string',
-	            'payment_number' => 'nullable|string',
-	            'order_note' => 'nullable|string',
-	        ]);
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'domain' => 'required|string|exists:domains,domain',
+                'customer_name' => 'required|string',
+                'customer_phone' => 'required|string',
+                'customer_address' => 'required',
+                'district' => 'nullable',
+                'payment_method' => 'required|string',
+                'sub_total' => 'required|numeric',
+                'total' => 'required|numeric',
+                'refer_code' => 'nullable|string|exists:users,refer_code',
+                'delivery_charge' => 'nullable|numeric',
+                'transaction_hash' => 'nullable|string',
+                'payment_number' => 'nullable|string',
+                'order_note' => 'nullable|string',
+                'orders' => 'required|array|min:1',
+                'orders.*.product_id' => 'required|exists:products,id',
+                'orders.*.product_price' => 'required',
+                'orders.*.variant_id' => 'nullable|array',
+                'orders.*.variant_id.*' => 'nullable|exists:variants,id',
+                'orders.*.qty' => 'required',
+                'orders.*.unit_total' => 'required',
+            ]);
 
-	        if ($validator->fails()) {
-	            DB::commit();
-	            return response()->json([
-	                'status' => false,
-	                'message' => 'The given data was invalid',
-	                'data' => $validator->errors()
-	            ], 422);
-	        }
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'The given data was invalid',
+                    'data' => $validator->errors()
+                ], 422);
+            }
+
+            foreach ($request->orders as $item) {
+                $product = Product::where('id', $item['product_id'])->first();
+                if((int)$product->stock_qty < (int)$item['qty']) {
+                    return response()->json([
+                        'status' => false,
+                        'data' => [],
+                        'message' => "Stock not available for product: {$product->product_name}"
+                    ], 422);
+                }
+            }
 
             DB::beginTransaction();
 
-	        $domain = domainDetails($request);
+            $domain = domainDetails($request);
 
-	        $orderDetail = new Orderdetail();
-	        $orderDetail->domain_id = $domain->id;
-	        $orderDetail->customer_name = $request->customer_name;
-	        $orderDetail->customer_phone = $request->customer_phone;
-	        $orderDetail->customer_address = $request->customer_address;
-	        $orderDetail->district = $request->district;
-	        $orderDetail->payment_method = $request->payment_method;
-	        $orderDetail->sub_total = $request->sub_total;
-	        $orderDetail->delivery_charge = $request->delivery_charge;
-	        $orderDetail->total = $request->total;
-	        $orderDetail->transaction_hash = $request->transaction_hash;
-	        $orderDetail->payment_number = $request->payment_number;
-	        $orderDetail->order_note = $request->order_note;
-	        $orderDetail->save();
+            $orderDetail = new Orderdetail();
+            $orderDetail->domain_id = $domain->id;
+            $orderDetail->customer_name = $request->customer_name;
+            $orderDetail->customer_phone = $request->customer_phone;
+            $orderDetail->customer_address = $request->customer_address;
+            $orderDetail->district = $request->district;
+            $orderDetail->payment_method = $request->payment_method;
+            $orderDetail->sub_total = $request->sub_total;
+            $orderDetail->delivery_charge = $request->delivery_charge;
+            $orderDetail->total = $request->total;
+            $orderDetail->transaction_hash = $request->transaction_hash;
+            $orderDetail->payment_number = $request->payment_number;
+            $orderDetail->order_note = $request->order_note;
+            $orderDetail->save();
 
-	        foreach ($request->orders as $item) {
-	            $order = new Order();
-	            $order->orderdetail_id = $orderDetail->id;
-	            $order->product_id = $item['product_id'];
-	            # $order->variant_id = $item['variant_id'] ?? null;
-	            $order->product_price = $item['product_price'];
-	            $order->qty = $item['qty'];
-	            $order->unit_total = $item['unit_total'];
-	            $order->save();
+            foreach ($request->orders as $item) {
+                $order = new Order();
+                $order->orderdetail_id = $orderDetail->id;
+                $order->product_id = $item['product_id'];
+                # $order->variant_id = $item['variant_id'] ?? null;
+                $order->product_price = $item['product_price'];
+                $order->qty = $item['qty'];
+                $order->unit_total = $item['unit_total'];
+                $order->save();
 
                 $variantIds = $item['variant_id'] ?? [];
                 if (is_array($variantIds) && count($variantIds) > 0) {
@@ -387,35 +403,35 @@ class ApiController extends Controller
                         ]);
                     }
                 }
-	        }
+            }
 
-	        if($request->has('refer_code'))
-	        {
-	        	$log = new Referlog();
-	        	$log->user_id = $domain->user_id;
-	        	$log->refer_code = $request->refer_code;
-	        	$log->date = date('Y-m-d');
-	        	$log->time = date('h:i A');
-	        	$log->save();
-	        }
+            if($request->has('refer_code'))
+            {
+                $log = new Referlog();
+                $log->user_id = $domain->user_id;
+                $log->refer_code = $request->refer_code;
+                $log->date = date('Y-m-d');
+                $log->time = date('h:i A');
+                $log->save();
+            }
 
-	        DB::commit();
-	        return response()->json([
-	            'status' => true,
-	            'order_id' => intval($orderDetail->id),
-	            'message' => 'Successfully your order has been processed. We will contact you soon.'
-	        ]);
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'order_id' => intval($orderDetail->id),
+                'message' => 'Successfully your order has been processed. We will contact you soon.'
+            ]);
 
-	    } catch(Exception $e) {
-	        DB::rollBack();
-	        return response()->json([
-	            'status' => false,
-	            'line' => $e->getLine(),
-	            'code' => $e->getCode(),
-	            'message' => $e->getMessage()
-	        ], 500);
-	    }
-	}
+        } catch(Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'line' => $e->getLine(),
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 
 	public function acceptCourierOrder(Request $request)
 	{

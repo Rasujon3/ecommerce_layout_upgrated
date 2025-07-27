@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: 'Courier New', monospace;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         #invoice-POS{
@@ -112,10 +112,10 @@
     <div id="mid">
         <div class="info">
             <h2>{{ $order->customer_name ?? "" }}</h2>
-            <p>
+            <h5>
                 Address : {{ $order->customer_address ?? "" }}</br>
                 Phone   : {{ $order->customer_phone ?? "" }}</br>
-            </p>
+            </h5>
         </div>
     </div><!--End Invoice Mid-->
 
