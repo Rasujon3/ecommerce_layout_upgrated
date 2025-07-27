@@ -79,10 +79,11 @@
                     <table id="my-order-table" class="table table-bordered table-striped data-table">
                         <thead>
                             <tr>
-                                <th>Order ID</th>
+                                <th>Order <br> ID</th>
                                 <th>Date</th>
-                                <th>Customer Name</th>
-                                <th>Payment Status</th>
+                                <th>Customer <br> Name</th>
+                                <th>Payment <br> Status</th>
+                                <th>Product <br> Details</th>
                                 <th>Customer Phone</th>
                                 <th>Total (BDT)</th>
                                 <th>Order Status</th>
@@ -169,6 +170,7 @@
                 {data: 'order_date', name: 'order_date'},
                 {data: 'customer_name', name: 'customer_name'},
                 {data: 'payment_status', name: 'payment_status'},
+                {data: 'product_details', name: 'product_details', orderable: false, searchable: false},
                 {data: 'customer_phone', name: 'customer_phone'},
                 {data: 'total', name: 'total'},
                 {data: 'status', name: 'status'},

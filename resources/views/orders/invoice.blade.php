@@ -84,16 +84,17 @@
                     @foreach($order->orders as $key=>$item)
                     <tr>
                       <td>{{$key+1}}</td>
-                      <td>
-                          {{$item->product->product_name}}
-                          @if($item->variantIds && count($item->variantIds) > 0)
-                              <br/>
-                              @foreach($item->variantIds as $v)
-                                  <small>({{ $v->variant->variant_name }}: {{ $v->variant->variant_value }})</small><br/>
-                              @endforeach
-                          @endif
-                      </td>
-                      <td>{{$item->product_price}}</td>
+                    <td>
+                        {{ $item->product->product_name }}
+                        @if($item->variantIds && count($item->variantIds) > 0)
+                            <br/>
+                            <small>(
+                                {{ $item->variantIds->pluck('variant.variant_value')->implode(', ') }}
+                                )</small>
+                        @endif
+                    </td>
+
+                        <td>{{$item->product_price}}</td>
                       <td>{{$item->qty}}</td>
                       <td>{{$item->unit_total}} BDT</td>
                     </tr>

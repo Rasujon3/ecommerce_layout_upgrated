@@ -104,8 +104,16 @@ class OrderController extends Controller
                         return "<button type='button' class='btn btn-success see-order-status order_status_btn_".$row->id."' data-id='".$row->id."'>See Status</button>";
                     })
 
-                    ->addColumn('payment_status', function($row){
-                        return !empty($row->transaction_hash) ? 'Paid' : 'Due';
+                    ->addColumn('payment_status', function($row) {
+                        return !empty($row->transaction_hash)
+                            ? "Paid ($row->payment_number, $row->transaction_hash)"
+                            : "Due ($row->payment_method)";
+                    })
+
+                    ->addColumn('product_details', function($row) {
+                        return '<a href="'.url('/show-products/'.$row->id).'">
+                                <button type="button" class="btn btn-success btn-sm action-button edit-order" data-id="'.$row->id.'">View</button>
+                                </a>';
                     })
 
                     ->addColumn('action', function($row){
@@ -163,7 +171,7 @@ class OrderController extends Controller
 
 
                     })->setRowID('id')
-                    ->rawColumns(['action','status','order_id','order_date','courier_status'])
+                    ->rawColumns(['action','status','order_id','order_date','courier_status', 'product_details'])
                     ->make(true);
             }
             return view('orders.my_order');
@@ -302,6 +310,32 @@ class OrderController extends Controller
                 'alert-type' => 'error'
             ];
             return redirect()->back()->with($notification);
+        }
+    }
+
+    public function showProducts($id)
+    {
+        try
+        {
+            $order = Orderdetail::with([
+                'orders.product',
+                'orders.variantIds.variant'
+            ])->findOrFail($id);
+            return view('orders.products',compact('order'));
+        }catch(Exception $e){
+            // Log the error
+            Log::error('Error in showing ordered products: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $notification = [
+                'messege' => 'Something went wrong!!!',
+                'alert-type' => 'error'
+            ];
+            return redirect()->route('my.orders')->with($notification);
         }
     }
 }

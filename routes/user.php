@@ -84,6 +84,8 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
 
     Route::post('see-order-status', [OrderController::class, 'seeOrderStatus']);
 
+    Route::get('/show-products/{id}', [OrderController::class, 'showProducts']);
+
 
   //settings
 
