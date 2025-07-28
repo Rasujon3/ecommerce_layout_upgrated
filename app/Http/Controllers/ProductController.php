@@ -106,18 +106,25 @@ class ProductController extends Controller
         DB::beginTransaction();
         try
         {
-            
-            $package = Package::where('id',getDomain()->package_id)->first();
+            $user = User::where('id',user()->id)->first();
             $count = Product::where('user_id',user()->id)->count();
+            if ($user->products_add_status === 1 || $count >= 5) {
+                $notification = array(
+                    'messege'=>'You can not add more than 5 products',
+                    'alert-type'=>'error'
+                );
+                return redirect()->route('products.index')->with($notification);
+            }
+            $package = Package::where('id',getDomain()->package_id)->first();
             if($count > $package->max_product)
             {
                 $notification=array(
                  'messege'=>'Product Upload Quota Exceeded',
                  'alert-type'=>'error',
                 );
-               DB::commit();
                return redirect()->back()->with($notification);
             }
+
             $product = new Product();
             $product->user_id = user()->id;
             $product->domain_id = getDomain()->id;
@@ -146,6 +153,13 @@ class ProductController extends Controller
                 'alert-type'=>'success',
             );
             DB::commit();
+
+            $countAfterInsert = Product::where('user_id',user()->id)->count();
+            if($countAfterInsert >= 5)
+            {
+                $user->products_add_status = 1;
+                $user->save();
+            }
             return redirect('/add-variant/'.$product->id)->with($notification);
 
         }catch(Exception $e){
