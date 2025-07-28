@@ -26,7 +26,6 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-{{--                {{ dd('$userInfo', $userInfo->package) }}--}}
                 @if(Auth::user()->status === 'Inactive')
                     <a
                         href="{{ route('redirect-demo-url') }}"
@@ -45,7 +44,9 @@
                     </a>
 
                 @endif
-                <a href="{{route('products.create')}}" class="btn btn-primary add-new mb-2">Add New Product</a>
+                @if($userInfo->products_add_status === 0)
+                   <a href="{{route('products.create')}}" class="btn btn-primary add-new mb-2">Add New Product</a>
+                @endif
                 <div class="fetch-data table-responsive">
                     <table id="product-table" class="table table-bordered table-striped data-table">
                         <thead>
